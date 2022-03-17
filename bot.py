@@ -3,6 +3,7 @@ import messages
 import telegramcalendar
 import telegramtime
 import spotsmongo
+import os
 
 from telegram.ext import Updater,CallbackQueryHandler,CommandHandler, MessageHandler,Filters
 from telegram import  ReplyKeyboardRemove,ParseMode
