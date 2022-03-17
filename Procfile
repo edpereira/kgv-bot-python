@@ -1,1 +1,1 @@
-calendar: python bot_example.py
+web: python bot_example.py
