@@ -71,6 +71,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+PORT = int(os.environ.get('PORT', '8443'))
 TOKEN = "5245043648:AAEYlV84JtcfVgwy6ZdHfc2c9hVjHTSYobw"
 updater = Updater(TOKEN,use_context=True)
 dp=updater.dispatcher
@@ -84,7 +85,7 @@ dp.add_handler(MessageHandler(Filters.regex('/remove_*'), remove_handler))
 dp.add_handler(CallbackQueryHandler(inline_handler))
 
 updater.start_webhook(listen="0.0.0.0",
-                    port=443,
+                    port=PORT,
                     url_path=TOKEN,
                     webhook_url="https://kgv-calendar.herokuapp.com/" + TOKEN)
 updater.idle()
