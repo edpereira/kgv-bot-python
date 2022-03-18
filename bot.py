@@ -5,7 +5,7 @@ import telegramtime
 import spotsmongo
 import os
 
-from telegram.ext import Updater,CallbackQueryHandler,CommandHandler, MessageHandler,Filters
+from telegram.ext import Updater,CallbackQueryHandler,CommandHandler, MessageHandler, Filters
 from telegram import  ReplyKeyboardRemove,ParseMode
 
 
@@ -87,9 +87,8 @@ dp.add_handler(MessageHandler(Filters.regex('/confirm_*'), confirm_handler))
 dp.add_handler(MessageHandler(Filters.regex('/remove_*'), remove_handler))
 dp.add_handler(CallbackQueryHandler(inline_handler))
 
-# updater.start_webhook(listen="0.0.0.0",
-#                     port=PORT,
-#                     url_path=TOKEN,
-#                     webhook_url="https://kgv-calendar.herokuapp.com/" + TOKEN)
-updater.start_polling()
+updater.start_webhook(listen="0.0.0.0",
+                    port=PORT,
+                    url_path=TOKEN,
+                    webhook_url="https://kgv-calendar.herokuapp.com/" + TOKEN)
 updater.idle()
