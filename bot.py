@@ -73,6 +73,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 PORT = int(os.environ.get('PORT', '8443'))
+print(PORT)
 TOKEN = "5245043648:AAEYlV84JtcfVgwy6ZdHfc2c9hVjHTSYobw"
 updater = Updater(TOKEN,use_context=True)
 dp=updater.dispatcher
