@@ -1,12 +1,12 @@
-import logging
+import os
+import uuid
 import messages
 import telegramcalendar
 import telegramtime
 import spotsmongo
-import os
 
-from telegram.ext import Updater,CallbackQueryHandler,CommandHandler, MessageHandler, Filters
-from telegram import  ReplyKeyboardRemove,ParseMode
+from telegram.ext import Updater, CallbackQueryHandler, CommandHandler, MessageHandler, Filters
+from telegram import ReplyKeyboardRemove, ParseMode
 
 
 # Command handler
@@ -28,13 +28,14 @@ def list_handler(update, context):
         return
     update.message.reply_text(text=messages.no_spots_message)
 
+
 # Message handler
 def confirm_handler(update, context):
     try:
         spotsmongo.save(update)
         update.message.reply_text(text=messages.spot_saved_message)
         return
-    except Exception as e:
+    except:
         update.message.reply_text(text=messages.command_not_found_message)
 
 def remove_handler(update, context):
@@ -54,30 +55,26 @@ def inline_handler(update, context):
     else:
         inline_calendar_handler(update, context)
 
-
 def inline_calendar_handler(update, context):
     selected,date = telegramcalendar.process_calendar_selection(update, context)
     if selected:
-        context.bot.send_message(chat_id=update.callback_query.from_user.id,
-                        text=messages.time_selection_message,
-                        reply_markup=telegramtime.create_time_data(f'/confirm_{date.strftime("%d_%m_%Y")}'))
+        context.bot.send_message(
+            chat_id=update.callback_query.from_user.id,
+            text=messages.time_selection_message,
+            reply_markup=telegramtime.create_time_data(f'/confirm_{date.strftime("%d_%m_%Y")}'))
 
 def inline_time_handler(update, context):
     selected,data = telegramtime.process_time_selection(update, context)
     if selected:
-        context.bot.send_message(chat_id=update.callback_query.from_user.id,
-                        text=data,
-                        reply_markup=ReplyKeyboardRemove())
+        context.bot.send_message(
+            chat_id=update.callback_query.from_user.id,
+            text=data,
+            reply_markup=ReplyKeyboardRemove())
 
 
 # Adding handlers and start webhook
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-PORT = int(os.environ.get('PORT', '8443'))
-TOKEN = "5245043648:AAEYlV84JtcfVgwy6ZdHfc2c9hVjHTSYobw"
-
-updater = Updater(TOKEN,use_context=True)
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
+updater = Updater(BOT_TOKEN,use_context=True)
 dp=updater.dispatcher
 
 dp.add_handler(CommandHandler("start", start_handler))
@@ -87,8 +84,10 @@ dp.add_handler(MessageHandler(Filters.regex('/confirm_*'), confirm_handler))
 dp.add_handler(MessageHandler(Filters.regex('/remove_*'), remove_handler))
 dp.add_handler(CallbackQueryHandler(inline_handler))
 
+PORT = int(os.environ.get('PORT', '8443'))
+UUID_PATH = str(uuid.uuid4())
 updater.start_webhook(listen="0.0.0.0",
                     port=PORT,
-                    url_path=TOKEN,
-                    webhook_url="https://kgv-calendar.herokuapp.com/" + TOKEN)
+                    url_path=UUID_PATH,
+                    webhook_url="https://kgv-calendar.herokuapp.com/" + UUID_PATH)
 updater.idle()
